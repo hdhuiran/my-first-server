@@ -18,6 +18,7 @@
 // app.listen(port, () => {
 //   console.log(`我们的第一个服务器，已经成功在 http://localhost:${port} 上启动了！`);
 // });
+//-----------------------------------------------------------------------------
 
 // const express = require('express');
 // const { goods } = require('./data.js');
@@ -33,45 +34,31 @@
 // // 修改：我们把根路径'/'的回复，改成更专业的 JSON 回复
 // app.get('/', (req, res) => {
 //   // 使用 res.json() 来发送我们的商品数据
-//   res.json(goods); 
+//   res.json(goods);
 // });
 
 // app.listen(port, () => {
 //   console.log(`服务器已启动，正在监听 http://localhost:${port}`);
 // });
+//-----------------------------------------------------------------------------
 
-const express = require('express');
-const { goods } = require('./data.js');
-const cors = require('cors');
+// 1. 引入所有需要的“工具包”
+const express = require("express");
+const { goods } = require("./data.js");
+const cors = require("cors"); // <-- 确保这一行存在
 
 const app = express();
 const port = 3000;
 
-app.use(cors());
+// 2. 关键！把“通行证”贴在所有菜单规则的最前面
+app.use(cors()); // <-- 确保这一行在所有 app.get/post 的上面
 
-// 新增：安装“JSON 解码器”，让我们的服务器能看懂 JSON 格式的请求体
-app.use(express.json());
-
-// “查菜单”的规则 (GET)
-app.get('/goods', (req, res) => {
+// 3. 我们的菜单规则
+app.get("/", (req, res) => {
   res.json(goods);
 });
 
-// 新增：“接订单”的规则 (POST)
-// 我们创建一个新的路径 /goods，专门用来接收新商品
-app.post('/goods', (req, res) => {
-  // req.body 就是“解码”后，我们拿到的顾客的点菜单（JSON 数据）
-  const newGood = req.body;
-  
-  console.log('后厨收到了新的订单:', newGood);
-
-  // 把新商品添加到我们的“菜单”里
-  goods.push(newGood);
-
-  // 回复顾客：“下单成功！”
-  res.send('商品添加成功!');
-});
-
+// 4. 开门营业
 app.listen(port, () => {
   console.log(`服务器已启动，正在监听 http://localhost:${port}`);
 });
